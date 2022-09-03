@@ -5,13 +5,15 @@ type RfidModuleType = {
   init(): Promise<any>;
 
   // 查找并点亮Id
-  find(filter:string): Promise<any>;
+  startLightUp(filter:string): Promise<any>;
+
+  stoplightUp(filter:string):void
 
   //开始查找RFID
   startScanRFID(): Promise<any>;
 
   //停止查找RFID
-  stop(): Promise<any>;
+  stopScanRFID(): Promise<any>;
 };
 
 const { RfidModule } = NativeModules;

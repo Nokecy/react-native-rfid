@@ -34,6 +34,7 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
     private static ReactApplicationContext reactcontext;
     public RFIDWithUHFUART uhf;
     public boolean isScanning = false;
+    public boolean light = false;
     private Handler handler;
     private List<UHFTAGInfo> tempDatas = new ArrayList<>();
 
@@ -42,6 +43,9 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
     final int FLAG_UHFINFO = 3;
     final int FLAG_SUCCESS = 10;
     final int FLAG_FAIL = 11;
+
+    final int FLAG_START_LIGHT = 15;
+    final int FLAG_STOP_LIGHT = 16;
 
     public RfidModuleModule(ReactApplicationContext reactContext) {
       super(reactContext);
@@ -73,6 +77,18 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
 //                Utils.playSound(2);
               }
               break;
+            case FLAG_START_LIGHT:
+              if (msg.arg1 == FLAG_SUCCESS) {
+                WritableMap payload = Arguments.createMap();
+                sendEvent(reactcontext, "onStartLight", payload);
+              }
+              break;
+            case FLAG_STOP_LIGHT:
+              if (msg.arg1 == FLAG_SUCCESS) {
+                WritableMap payload = Arguments.createMap();
+                sendEvent(reactcontext, "onStopLight", payload);
+              }
+              break;
           }
         }
       };
@@ -101,19 +117,29 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void find(String filterPtr,Promise promise) throws ConfigurationException {
+    public void startLightUp(String filterPtr,Promise promise) throws ConfigurationException {
       if (uhf==null){
         promise.reject("001","没有连接模块");
         return;
       }
       else
       {
-        String pwdStr = "00000000";
-        int filterCnt = filterPtr.length() * 4;
-        uhf.readData(pwdStr,IUHF.Bank_EPC,32,filterCnt,filterPtr,IUHF.Bank_RESERVED,4,1);
+        light = false;
+
+        new LightThread(filterPtr).start();
+
         promise.resolve("");
       }
   }
+
+    @ReactMethod
+    public void stoplightUp(String filterPtr,Promise promise) throws ConfigurationException {
+      light = false;
+
+      Message msg = handler.obtainMessage(FLAG_STOP_LIGHT);
+      msg.arg1 = FLAG_SUCCESS;
+      handler.sendMessage(msg);
+    }
 
     @ReactMethod
     public void startScanRFID() {
@@ -122,7 +148,7 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    private void stop() {
+    private void stopScanRFID() {
       isScanning = false;
     }
 
@@ -166,6 +192,24 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
         }
         stopInventory();
       }
+    }
+
+    class LightThread extends Thread {
+        private String filterPtr = "";
+        public LightThread(String filterPtr){
+          this.filterPtr= filterPtr;
+        }
+        public void run() {
+          Message msg = handler.obtainMessage(FLAG_START_LIGHT);
+          msg.arg1 = FLAG_SUCCESS;
+          handler.sendMessage(msg);
+
+          while (light) {
+            String pwdStr = "00000000";
+            int filterCnt = filterPtr.length() * 4;
+            uhf.readData(pwdStr,IUHF.Bank_EPC,32,filterCnt,filterPtr,IUHF.Bank_RESERVED,4,1);
+          }
+        }
     }
 
     private void stopInventory(){
