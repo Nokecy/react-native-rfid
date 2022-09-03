@@ -36,6 +36,7 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
     public boolean isScanning = false;
     public boolean light = false;
     private Handler handler;
+    private Thread lightThread;
     private List<UHFTAGInfo> tempDatas = new ArrayList<>();
 
     final int FLAG_START = 0;
@@ -129,9 +130,13 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
       }
       else
       {
+        if (lightThread!=null){
+          lightThread.interrupt();
+        }
         light = true;
 
-        new LightThread(filterPtr).start();
+        lightThread  = new LightThread(filterPtr);
+        lightThread.start();
 
         promise.resolve("");
       }
@@ -149,6 +154,7 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void startScanRFID() {
       isScanning = true;
+      tempDatas.clear();
       new TagThread().start();
     }
 
@@ -210,6 +216,11 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
           handler.sendMessage(msg);
 
           while (light) {
+            //判断是否被中断
+            if(Thread.currentThread().isInterrupted()){
+              //处理中断逻辑
+              break;
+            }
             String pwdStr = "00000000";
             int filterCnt = filterPtr.length() * 4;
             uhf.readData(pwdStr,IUHF.Bank_EPC,32,filterCnt,filterPtr,IUHF.Bank_RESERVED,4,1);
