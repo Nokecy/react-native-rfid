@@ -1,18 +1,44 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, DeviceEventEmitter, TouchableOpacity } from 'react-native';
 import RfidModule from 'react-native-rfid-module';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
   React.useEffect(() => {
-    RfidModule.multiply(3, 7).then(setResult);
+    RfidModule.init().then(() => {
+
+    });
+
+    DeviceEventEmitter.addListener('findRfid', res => {
+      console.log("ReadRFIDListenner", res.rfid_tag)
+    })
+
+    DeviceEventEmitter.addListener('StartScanRfid', res => {
+      console.log("StartScanRfid", "StartScanRfid")
+    })
+
+    DeviceEventEmitter.addListener('StopScanRfid', res => {
+      console.log("StopScanRfid", "StopScanRfid")
+    })
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>Result: {"abc"}</Text>
+
+      <TouchableOpacity onPress={()=>{
+        RfidModule.startScanRFID();
+      }}>
+        <Text>Result: {"点击开始搜索"}</Text>
+      </TouchableOpacity>
+
+
+
+      <TouchableOpacity onPress={()=>{
+        RfidModule.find("202208241035");
+      }}>
+        <Text>Result: {"点击开始搜索"}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
