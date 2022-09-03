@@ -1,6 +1,6 @@
 {
   "name": "react-native-rfid-module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "rifd",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -79,8 +79,7 @@
     ]
   },
   "husky": {
-    "hooks": {
-    }
+    "hooks": {}
   },
   "commitlint": {
     "extends": [
