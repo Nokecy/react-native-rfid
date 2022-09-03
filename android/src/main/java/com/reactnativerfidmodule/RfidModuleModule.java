@@ -124,7 +124,7 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
       }
       else
       {
-        light = false;
+        light = true;
 
         new LightThread(filterPtr).start();
 
