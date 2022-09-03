@@ -7,7 +7,7 @@ type RfidModuleType = {
   // 查找并点亮Id
   startLightUp(filter:string): Promise<any>;
 
-  stoplightUp(filter:string):void
+  stoplightUp():void
 
   //开始查找RFID
   startScanRFID(): Promise<any>;

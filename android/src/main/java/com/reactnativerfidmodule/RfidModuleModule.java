@@ -133,7 +133,7 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
   }
 
     @ReactMethod
-    public void stoplightUp(String filterPtr,Promise promise) throws ConfigurationException {
+    public void stoplightUp() throws ConfigurationException {
       light = false;
 
       Message msg = handler.obtainMessage(FLAG_STOP_LIGHT);
