@@ -4,6 +4,9 @@ type RfidModuleType = {
   // 初始化模块
   init(): Promise<any>;
 
+  //释放模块
+  free():void
+
   // 查找并点亮Id
   startLightUp(filter:string): Promise<any>;
 

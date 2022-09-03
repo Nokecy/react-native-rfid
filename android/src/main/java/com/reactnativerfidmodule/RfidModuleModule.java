@@ -104,7 +104,7 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
       reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }
 
-  @ReactMethod
+    @ReactMethod
     public void init(Promise promise) throws ConfigurationException {
       try {
         uhf = RFIDWithUHFUART.getInstance();
@@ -114,6 +114,11 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
         return;
       }
       promise.resolve("");
+    }
+
+    @ReactMethod
+    public void free() {
+        uhf.free();
     }
 
     @ReactMethod
