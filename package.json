@@ -1,6 +1,6 @@
 {
   "name": "react-native-rfid-module",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "rifd",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
