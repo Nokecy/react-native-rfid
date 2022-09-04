@@ -179,7 +179,9 @@ public class RfidModuleModule extends ReactContextBaseJavaModule {
     @Override
     public void onCatalystInstanceDestroy() {
       super.onCatalystInstanceDestroy();
-      uhf.free();
+      if (uhf!=null){
+        uhf.free();
+      }
     }
 
     class TagThread extends Thread {
