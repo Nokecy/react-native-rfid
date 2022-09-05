@@ -55,6 +55,6 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"
-    compileOnly fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
+    implementation (name: 'DeviceAPI20220518', ext: 'aar')
     // From node_modules
 }
